@@ -29,7 +29,7 @@ def rotate_photos():
             chosen_file = random.choice(photo_files)
             filepath = os.path.join(UPLOAD_FOLDER, chosen_file)
             time.sleep(1)  # Wait for the file to be fully uploaded
-            os.rename(filepath, os.path.join(UPLOAD_FOLDER, 'current_image'))
+            os.rename(filepath, os.path.join(UPLOAD_FOLDER, 'current_image.png'))
         time.sleep(ROTATION_INTERVAL)
 
 @app.route('/')
@@ -61,7 +61,7 @@ def upload():
 def current_image():
     photo_files = [file for file in os.listdir(UPLOAD_FOLDER) if allowed_file(file)]
     if photo_files:
-        chosen_file = random.choice(photo_files)
+        chosen_file = 'current_image.png'
         filepath = os.path.join(UPLOAD_FOLDER, chosen_file)
         response = make_response(send_from_directory(UPLOAD_FOLDER, chosen_file))
         response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
