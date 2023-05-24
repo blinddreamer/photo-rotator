@@ -13,7 +13,6 @@
 /src/components/Body.js
 OG.dockerfile
 .env.example
-server.js
 node_modules
 
 # production
