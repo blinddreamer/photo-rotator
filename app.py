@@ -1,4 +1,6 @@
-from flask import Flask, render_template, send_from_directory
+from flask import Flask, render_template, request, send_from_directory
+from werkzeug.utils import secure_filename
+from PIL import Image
 import os
 import random
 import threading
@@ -7,12 +9,18 @@ import time
 app = Flask(__name__)
 
 UPLOAD_FOLDER = 'uploads'
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+ALLOWED_EXTENSIONS = {'png'}
+IMAGE_WIDTH = 600
+IMAGE_HEIGHT = 800
 ROTATION_INTERVAL = 900  # 15 minutes in seconds
 
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def validate_image_size(image):
+    width, height = image.size
+    return width == IMAGE_WIDTH and height == IMAGE_HEIGHT
 
 def rotate_photos():
     while True:
@@ -27,6 +35,27 @@ def rotate_photos():
 @app.route('/')
 def index():
     return render_template('index.html')
+
+@app.route('/upload', methods=['POST'])
+def upload():
+    if 'file' not in request.files:
+        return "No file uploaded"
+
+    file = request.files['file']
+
+    if file.filename == '':
+        return "No file selected"
+
+    if file and allowed_file(file.filename):
+        image = Image.open(file)
+        if validate_image_size(image):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(UPLOAD_FOLDER, filename))
+            return f"File {filename} uploaded successfully"
+        else:
+            return f"Invalid image dimensions. Image must be {IMAGE_WIDTH}x{IMAGE_HEIGHT} pixels."
+
+    return "Invalid file format"
 
 @app.route('/current_image')
 def current_image():
