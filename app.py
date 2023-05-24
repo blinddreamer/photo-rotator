@@ -57,9 +57,14 @@ def upload():
 
     return "Invalid file format"
 
-@app.route('/current_image')
+@app.route('/current_image/')
 def current_image():
-    return send_from_directory(UPLOAD_FOLDER, 'current_image')
+    photo_files = [file for file in os.listdir(UPLOAD_FOLDER) if allowed_file(file)]
+    if photo_files:
+        chosen_file = random.choice(photo_files)
+        return send_from_directory(UPLOAD_FOLDER, chosen_file)
+    else:
+        return "No photo available"
 
 if __name__ == '__main__':
     if not os.path.exists(UPLOAD_FOLDER):
