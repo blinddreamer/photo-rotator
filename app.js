@@ -3,7 +3,7 @@ const multer = require('multer');
 const sharp = require('sharp');
 const fs = require('fs');
 const path = require('path');
-import random from 'random';
+const random = require('random');
 
 const app = express();
 const upload = multer({ dest: 'uploads/' });
