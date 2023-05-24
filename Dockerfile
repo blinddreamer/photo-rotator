@@ -1,12 +1,20 @@
-FROM python:3.9-alpine
+# Base image
+FROM node:14-alpine
 
+# Set the working directory in the container
 WORKDIR /app
 
-COPY requirements.txt .
+# Copy package.json and package-lock.json to the working directory
+COPY package*.json ./
 
-RUN apk add --no-cache gcc musl-dev python3-dev libffi-dev openssl-dev
-RUN pip install --upgrade pip && pip install -r requirements.txt
+# Install dependencies
+RUN npm install
 
+# Copy the application code to the container
 COPY . .
 
-CMD ["python", "app.py"]
+# Expose the port
+EXPOSE 5099
+
+# Run the application
+CMD ["node", "app.js"]
