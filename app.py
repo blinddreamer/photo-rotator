@@ -42,14 +42,9 @@ def rotate_photos():
         time.sleep(rotate_interval)
         rotate_interval = ROTATION_INTERVAL  # Set the rotation interval for subsequent rotations
 
-@app.route('/current_image.png')
-def current_image():
-    global current_image_filename
-
-    if current_image_filename:
-        return send_from_directory(UPLOAD_FOLDER, current_image_filename)
-    else:
-        return "No photo available"
+@app.route('/')
+def index():
+    return render_template('index.html')
 
 @app.route('/upload', methods=['POST'])
 def upload():
@@ -73,15 +68,11 @@ def upload():
     return "Invalid file format"
 
 @app.route('/current_image.png')
-def current_image():
+def get_current_image():
     global current_image_filename
 
     if current_image_filename:
-        response = make_response(send_from_directory(UPLOAD_FOLDER, 'current_image.png'))
-        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
-        response.headers['Pragma'] = 'no-cache'
-        response.headers['Expires'] = '0'
-        return response
+        return send_from_directory(UPLOAD_FOLDER, current_image_filename)
     else:
         return "No photo available"
 
