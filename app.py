@@ -14,6 +14,8 @@ IMAGE_WIDTH = 600
 IMAGE_HEIGHT = 800
 ROTATION_INTERVAL = 900  # 15 minutes in seconds
 
+current_image_filename = None
+
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -26,10 +28,20 @@ def rotate_photos():
     while True:
         photo_files = [file for file in os.listdir(UPLOAD_FOLDER) if allowed_file(file)]
         if photo_files:
+            global current_image_filename
+
+            # Revert current_image to its original filename if it exists
+            if current_image_filename:
+                os.rename(os.path.join(UPLOAD_FOLDER, 'current_image.png'), os.path.join(UPLOAD_FOLDER, current_image_filename))
+
+            # Select a new random image
             chosen_file = random.choice(photo_files)
             filepath = os.path.join(UPLOAD_FOLDER, chosen_file)
-            time.sleep(1)  # Wait for the file to be fully uploaded
+
+            # Rename the new image to current_image.png
             os.rename(filepath, os.path.join(UPLOAD_FOLDER, 'current_image.png'))
+            current_image_filename = chosen_file
+
         time.sleep(ROTATION_INTERVAL)
 
 @app.route('/')
@@ -59,11 +71,10 @@ def upload():
 
 @app.route('/current_image.png')
 def current_image():
-    photo_files = [file for file in os.listdir(UPLOAD_FOLDER) if allowed_file(file)]
-    if photo_files:
-        chosen_file = 'current_image.png'
-        filepath = os.path.join(UPLOAD_FOLDER, chosen_file)
-        response = make_response(send_from_directory(UPLOAD_FOLDER, chosen_file))
+    global current_image_filename
+
+    if current_image_filename:
+        response = make_response(send_from_directory(UPLOAD_FOLDER, 'current_image.png'))
         response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
         response.headers['Pragma'] = 'no-cache'
         response.headers['Expires'] = '0'
