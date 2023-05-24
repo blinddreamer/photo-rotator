@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, send_from_directory
+from flask import Flask, render_template, request, send_from_directory, make_response
 from werkzeug.utils import secure_filename
 from PIL import Image
 import os
@@ -62,7 +62,12 @@ def current_image():
     photo_files = [file for file in os.listdir(UPLOAD_FOLDER) if allowed_file(file)]
     if photo_files:
         chosen_file = random.choice(photo_files)
-        return send_from_directory(UPLOAD_FOLDER, chosen_file)
+        filepath = os.path.join(UPLOAD_FOLDER, chosen_file)
+        response = make_response(send_from_directory(UPLOAD_FOLDER, chosen_file))
+        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '0'
+        return response
     else:
         return "No photo available"
 
