@@ -25,6 +25,7 @@ def validate_image_size(image):
     return width == IMAGE_WIDTH and height == IMAGE_HEIGHT
 
 def rotate_photos():
+    rotate_interval = 0  # Start rotating immediately upon starting the application
     while True:
         photo_files = [file for file in os.listdir(UPLOAD_FOLDER) if allowed_file(file)]
         if photo_files:
@@ -42,7 +43,8 @@ def rotate_photos():
             os.rename(filepath, os.path.join(UPLOAD_FOLDER, 'current_image.png'))
             current_image_filename = chosen_file
 
-        time.sleep(ROTATION_INTERVAL)
+        time.sleep(rotate_interval)
+        rotate_interval = ROTATION_INTERVAL  # Set the rotation interval for subsequent rotations
 
 @app.route('/')
 def index():
