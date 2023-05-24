@@ -1,0 +1,35 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+/.vscode
+.pnp.js
+
+# testing
+/coverage
+
+#asd
+/src/components/Body.js
+package-lock.json
+OG.dockerfile
+.env.example
+server.js
+node_modules
+
+# production
+/build
+
+# misc
+.DS_Store
+.env.local
+.env.example
+.env.development.local
+.env.test.local
+.env.production.local
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# "start": "react-scripts start",
