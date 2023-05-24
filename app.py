@@ -31,24 +31,25 @@ def rotate_photos():
         if photo_files:
             global current_image_filename
 
-            # Revert current_image to its original filename if it exists
-            if current_image_filename:
-                os.rename(os.path.join(UPLOAD_FOLDER, 'current_image.png'), os.path.join(UPLOAD_FOLDER, current_image_filename))
-
             # Select a new random image
             chosen_file = random.choice(photo_files)
             filepath = os.path.join(UPLOAD_FOLDER, chosen_file)
 
             # Rename the new image to current_image.png
-            os.rename(filepath, os.path.join(UPLOAD_FOLDER, 'current_image.png'))
-            current_image_filename = chosen_file
+            os.replace(filepath, os.path.join(UPLOAD_FOLDER, 'current_image.png'))
+            current_image_filename = 'current_image.png'
 
         time.sleep(rotate_interval)
         rotate_interval = ROTATION_INTERVAL  # Set the rotation interval for subsequent rotations
 
-@app.route('/')
-def index():
-    return render_template('index.html')
+@app.route('/current_image.png')
+def current_image():
+    global current_image_filename
+
+    if current_image_filename:
+        return send_from_directory(UPLOAD_FOLDER, current_image_filename)
+    else:
+        return "No photo available"
 
 @app.route('/upload', methods=['POST'])
 def upload():
