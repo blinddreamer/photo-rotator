@@ -11,7 +11,6 @@
 
 #asd
 /src/components/Body.js
-package-lock.json
 OG.dockerfile
 .env.example
 server.js
